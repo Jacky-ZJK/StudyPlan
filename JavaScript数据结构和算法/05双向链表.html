@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function DoubleLinkedList() {
+            function Node(data) {
+                this.data = data
+                this.prev = null
+                this.next = null
+            }
+
+            this.head = null
+            this.tail = null
+            this.length = 0
+
+            DoubleLinkedList.prototype.append = function(data) {
+                let newNode = new Node(data)
+                if (this.length === 0) {
+                    this.head = newNode
+                    this.tail = newNode
+                } else {
+                    newNode.prev = this.tail
+                    this.tail.next = newNode
+                    this.tail = newNode
+                }
+
+                this.length += 1
+                return true
+            }
+
+            DoubleLinkedList.prototype.insert = function(position, data) {
+                if (position < 0 || position > this.length || isNaN(position)) return false
+
+                let newNode = new Node(data)
+
+                if (this.length === 0) {
+                    return this.append(data)
+                } else {
+                    if (position === 0) {
+                        newNode.next = this.head
+                        this.head.prev = newNode
+                        this.head = newNode
+                    } else if (position === this.length) {
+                        return this.append(data)
+                            // this.tail.next = newNode
+                            // newNode.prev = this.tail
+                            // this.tail = newNode
+                    } else {
+                        let index = 0
+                        let current = this.head
+                        while (index++ < position) {
+                            current = current.next
+                        }
+                        newNode.prev = current.prev
+                        current.prev.next = newNode
+                        current.prev = newNode
+                        newNode.next = current
+                    }
+                    this.length += 1
+                    return true
+                }
+            }
+
+            DoubleLinkedList.prototype.get = function(position) {
+                if (position < 0 || position >= this.length || isNaN(position)) return false
+
+                let index = 0
+                let current = this.head
+                while (index++ < position) {
+                    current = current.next
+                }
+
+                return current.data
+            }
+
+            DoubleLinkedList.prototype.update = function(position, data) {
+                if (position < 0 || position >= this.length || isNaN(position)) return false
+
+                let index = 0
+                let current = this.head
+                while (index++ < position) {
+                    current = current.next
+                }
+                current.data = data
+
+                return true
+            }
+
+            DoubleLinkedList.prototype.indexOf = function(data) {
+                let index = 0
+                let current = this.head
+                while (index < this.length) {
+                    if (current.data === data) {
+                        return index
+                    }
+                    current = current.next
+                    index++
+                }
+                return false
+            }
+
+            DoubleLinkedList.prototype.removeAt = function(position) {
+                if (position < 0 || position >= this.length || isNaN(position)) return false
+
+                if (position === 0) {
+                    this.head = this.head.next
+                    this.head.prev = null
+                } else if (position === this.length - 1) {
+                    this.tail = this.tail.prev
+                    this.tail.next = null
+                } else {
+                    let index = 0
+                    let current = this.head
+                    while (index++ < position) {
+                        current = current.next
+                    }
+                    current.next.prev = current.prev
+                    current.prev.next = current.next
+                }
+                this.length -= 1
+                return true
+            }
+
+            DoubleLinkedList.prototype.remove = function(data) {
+                let position = this.indexOf(data)
+                return this.removeAt(position)
+            }
+
+            DoubleLinkedList.prototype.size = function() {
+                return this.length
+            }
+
+            DoubleLinkedList.prototype.isEmpty = function() {
+                return this.length === 0
+            }
+
+            DoubleLinkedList.prototype.toString = function() {
+                return this.backToString()
+            }
+
+            DoubleLinkedList.prototype.forwardToString = function() {
+                let content = ''
+                let current = this.tail
+                while (current) {
+                    content += current.data + ' '
+                    current = current.prev
+                }
+
+                return content
+            }
+
+            DoubleLinkedList.prototype.backToString = function() {
+                let content = ''
+                let current = this.head
+                while (current) {
+                    content += current.data + ' '
+                    current = current.next
+                }
+
+                return content
+            }
+        }
+
+        let list = new DoubleLinkedList()
+        list.append('aaa')
+        list.append('bbb')
+        list.append('ccc')
+        list.append('ddd')
+
+        // list.insert(0, '000')
+        // list.insert(5, 'nnn')
+        // list.insert(3, '000')
+        alert(list)
+            // list.update(0, '000')
+            // list.update(3, '333')
+            // list.update(1, '111')
+            // list.removeAt(1)
+            // alert(list.indexOf('aaa'))
+        alert(list.remove('aaa'))
+        alert(list)
+    </script>
+</body>
+
+</html>

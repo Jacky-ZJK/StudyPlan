@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function HashList() {
+            this.count = 0
+            this.limit = 7
+            this.storage = []
+
+            //哈希函数
+            HashList.prototype.hashFunc = function(key, limit) {
+                let hashCode = 0
+                for (let i = 0; i < key.length; i++) {
+                    hashCode = 37 * hashCode + key.charCodeAt(i)
+                }
+
+                let index = hashCode & limit
+                return index
+            }
+
+            //添加/修改
+            HashList.prototype.put = function(key, value) {
+                let index = this.hashFunc(key, this.limit)
+                let bucket = this.storage[index]
+
+                if (!bucket) {
+                    bucket = []
+                    this.storage[index] = bucket
+                }
+
+                for (let i = 0; i < bucket.length; i++) {
+                    let tuple = bucket[i]
+                    if (tuple[0] === key) {
+                        tuple[1] = value
+                        return
+                    }
+                }
+
+                bucket.push([key, value])
+                this.count += 1
+
+                if (this.count > this.limit * 0.75) {
+                    let size = this.limit * 2
+                    this.resize(size)
+                }
+            }
+
+            HashList.prototype.get = function(key) {
+                let index = this.hashFunc(key, this.limit)
+                let bucket = this.storage[index]
+
+                if (!bucket) return null
+
+                for (let i = 0; i < bucket.length; i++) {
+                    let tuple = bucket[i]
+                    if (tuple[0] === key) {
+                        return tuple[1]
+                    }
+                }
+
+                return null
+            }
+
+            HashList.prototype.removeAt = function(key) {
+                let index = this.hashFunc(key, this.limit)
+                let bucket = this.storage[index]
+                if (!bucket) return null
+
+                for (let i = 0; i < bucket.length; i++) {
+                    let tuple = bucket[i]
+                    if (tuple[0] === key) {
+                        bucket.splice(i, 1)
+                        this.count -= 1
+
+                        if (this.count < this.limit * 0.25 && this.limit > 7) {
+                            let size = parseInt(this.limit / 2)
+                            if (size < 7) size = 7
+                            console.log(size);
+
+                            this.resize(size)
+                        }
+
+                        return tuple
+                    }
+                }
+
+                return null
+            }
+
+            HashList.prototype.size = function() {
+                return this.count
+            }
+
+            HashList.prototype.isPrime = function(value) {
+                if (value <= 0) return null
+                let condition = parseInt(Math.sqrt(value))
+                for (let i = 2; i <= condition; i++) {
+                    if (!(value % i)) {
+                        return false
+                    }
+                }
+                return true
+            }
+
+            HashList.prototype.getPrime = function(value) {
+                while (!this.isPrime(value)) {
+                    value++
+                }
+                return value
+            }
+
+            HashList.prototype.resize = function(size) {
+                let oldStorage = this.storage
+                this.storage = []
+                this.count = 0
+                this.limit = this.getPrime(size)
+
+                for (let i = 0; i < oldStorage.length; i++) {
+                    let bucket = oldStorage[i]
+                    if (!bucket) continue
+
+                    for (let j = 0; j < bucket.length; j++) {
+                        let tuple = bucket[j]
+                        this.put(tuple[0], tuple[1])
+                    }
+                }
+            }
+        }
+
+        let hashList = new HashList()
+        hashList.put('jack', '123')
+        hashList.put('lucy', '456')
+        hashList.put('mark', '789')
+        hashList.put('joker', '159')
+        hashList.put('tyu', '159')
+        hashList.put('qwe', '159')
+        hashList.put('iop', '159')
+        hashList.put('fgh', '159')
+
+        alert(hashList.get('lucy'))
+        alert(hashList.size())
+        alert(hashList.limit)
+        hashList.removeAt('fgh')
+        hashList.removeAt('iop')
+        hashList.removeAt('qwe')
+        hashList.removeAt('tyu')
+        hashList.removeAt('joker')
+        hashList.removeAt('jack')
+        hashList.removeAt('lucy')
+        alert(hashList.size())
+        alert(hashList.limit)
+    </script>
+</body>
+
+</html>

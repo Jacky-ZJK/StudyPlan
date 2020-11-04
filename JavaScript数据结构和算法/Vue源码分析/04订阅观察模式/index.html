@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root">
+    <div class="title">
+      <div>{{name}}</div>
+      <div>{{age}}</div>
+      <div>{{gender}}</div>
+      <ul>
+        <li>{{others.heigh}}</li>
+        <li>{{others.weight}}</li>
+      </ul>
+    </div>
+  </div>
+</body>
+<script src="./src/VNode.js"></script>
+<script src="./src/getAst.js"></script>
+<script src="./src/compiler.js"></script>
+<script src="./src/Dep.js"></script>
+<script src="./src/Watcher.js"></script>
+<script src="./src/JGVue.js"></script>
+<script src="./src/initData.js"></script>
+<script>
+  let app = new JGVue({
+    el: '#root',
+    data: {
+      name: 'jacky',
+      age: 18,
+      gender: 'meal',
+      others: {
+        heigh: '180cm',
+        weight: '75kg' 
+      }
+    }
+  })
+</script>
+</html>

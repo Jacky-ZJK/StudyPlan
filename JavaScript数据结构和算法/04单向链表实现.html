@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function LinkList() {
+            function LinkListEle(data, next) {
+                this.data = data
+                this.next = null
+            }
+
+            this.length = 0
+            this.head = null
+
+            LinkList.prototype.append = function(element) {
+                let linkListEle = new LinkListEle(element)
+
+                if (this.head) {
+                    let current = this.head
+                    while (current.next) {
+                        current = current.next
+                    }
+                    current.next = linkListEle
+                    this.length += 1
+                    return true
+                }
+
+                this.head = linkListEle
+                this.length += 1
+                return true
+            }
+
+            LinkList.prototype.toString = function() {
+                let content = ''
+                let current = this.head
+                for (let i = 0; i < this.length; i++) {
+                    content += current.data + ' '
+                    current = current.next
+                }
+
+                return content
+            }
+
+            LinkList.prototype.insert = function(position, element) {
+                let linkListEle = new LinkListEle(element)
+
+                if (position < 0 || position > this.length) return false
+
+                if (position) {
+                    let index = 0
+                    let prev = null
+                    let current = this.head
+
+                    while (index++ < position) {
+                        prev = current
+                        current = current.next
+                    }
+                    prev.next = linkListEle
+                    linkListEle.next = current
+                    this.length += 1
+                    return true
+                }
+
+                linkListEle.next = this.head
+                this.head = linkListEle
+                this.length += 1
+                return true
+            }
+
+            LinkList.prototype.get = function(position) {
+                if (position < 0 || position >= this.length) return false
+
+                let index = 0
+                let current = this.head
+                while (index++ < position) {
+                    current = current.next
+                }
+
+                return current.data
+            }
+
+            LinkList.prototype.updata = function(position, data) {
+                if (position < 0 || position >= this.length) return false
+
+                let index = 0
+                let current = this.head
+                while (index++ < position) {
+                    current = current.next
+                }
+                current.data = data
+
+                return true
+            }
+
+            LinkList.prototype.indexOf = function(data) {
+                let index = 0
+                let current = this.head
+                while (current.data !== data) {
+                    current = current.next
+                    index += 1
+                }
+                return index
+            }
+
+            LinkList.prototype.removeAt = function(position) {
+                if (position < 0 || position >= this.length) return false
+
+                if (position) {
+                    let index = 0
+                    let prev = null
+                    let current = this.head
+                    while (index++ < position) {
+                        prev = current
+                        current = current.next
+                    }
+                    prev.next = current.next
+                    this.length -= 1
+                    return true
+                }
+
+                this.head = this.head.next
+                this.length -= 1
+                return true
+            }
+
+            LinkList.prototype.remove = function(data) {
+                let position = this.indexOf(data)
+                return this.removeAt(position)
+            }
+
+            LinkList.prototype.size = function() {
+                return this.length
+            }
+
+            LinkList.prototype.isEmpty = function() {
+                return this.length === 0
+            }
+
+        }
+
+        let temp = new LinkList()
+        temp.append('asdas')
+        temp.append('fgd')
+        temp.append('asd')
+        temp.append('zxc')
+        console.log(temp);
+        alert(temp)
+
+        // temp.insert(0, 'aaa')
+        // temp.insert(2, 'bbb')
+        // temp.insert(6, 'ccc')
+        // alert(temp)
+
+        // alert(temp.get(6))
+        // alert(temp.get(0))
+        // alert(temp.get(3))
+        // alert(temp.get(7))
+
+        // temp.updata(0, 'mmm')
+        // console.log(temp.updata(3, 'nnn'));
+        // console.log(temp.updata(4, 'nnn'));
+        // alert(temp)
+
+        // alert(temp.indexOf('asd'))
+        // alert(temp.indexOf('zxc'))
+        // alert(temp.indexOf('asdas'))
+
+        // temp.removeAt(0)
+        // temp.removeAt(1)
+        temp.remove('asdas')
+        alert(temp.size())
+        temp.remove('zxc')
+        alert(temp.size())
+        alert(temp.isEmpty())
+        alert(temp)
+    </script>
+</body>
+
+</html>

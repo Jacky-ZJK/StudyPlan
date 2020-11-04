@@ -1,0 +1,240 @@
+<script>
+    function BinarySearchTree() {
+        //根节点
+        this.root = null
+            //节点个数
+        this.length = 0
+
+        function Node(key) {
+            this.left = null
+            this.key = key
+            this.right = null
+        }
+
+        BinarySearchTree.prototype.insert = key => {
+            let newNode = new Node(key)
+            if (this.root === null) {
+                this.root = newNode
+            } else {
+                this.insertNode(this.root, newNode)
+            }
+
+            this.length += 1
+        }
+
+        BinarySearchTree.prototype.insertNode = (node, newNode) => {
+            if (newNode.key < node.key) {
+                if (node.left === null) {
+                    node.left = newNode
+                } else {
+                    this.insertNode(node.left, newNode)
+                }
+            } else if (newNode.key > node.key) {
+                if (node.right === null) {
+                    node.right = newNode
+                } else {
+                    this.insertNode(node.right, newNode)
+                }
+            }
+        }
+
+        BinarySearchTree.prototype.forwordOrderTraversal = handle => {
+            this.forwordOrderTraversalNode(this.root, handle)
+        }
+
+        BinarySearchTree.prototype.forwordOrderTraversalNode = (node, handle) => {
+            if (node !== null) {
+                handle(node.key)
+
+                this.forwordOrderTraversalNode(node.left, handle)
+
+                this.forwordOrderTraversalNode(node.right, handle)
+            }
+        }
+
+        BinarySearchTree.prototype.backwordOrderTraversal = handle => {
+            this.backwordOrderTraversalNode(this.root, handle)
+        }
+
+        BinarySearchTree.prototype.backwordOrderTraversalNode = (node, handle) => {
+            if (node !== null) {
+
+                this.backwordOrderTraversalNode(node.left, handle)
+
+                this.backwordOrderTraversalNode(node.right, handle)
+
+                handle(node.key)
+            }
+        }
+
+        BinarySearchTree.prototype.midOrderTraversal = handle => {
+            this.midOrderTraversalNode(this.root, handle)
+        }
+
+        BinarySearchTree.prototype.midOrderTraversalNode = (node, handle) => {
+            if (node !== null) {
+
+                this.midOrderTraversalNode(node.left, handle)
+
+                handle(node.key)
+
+                this.midOrderTraversalNode(node.right, handle)
+            }
+        }
+
+        BinarySearchTree.prototype.maxValue = () => {
+            let current = this.root
+            let node = null
+            while (current !== null) {
+                node = current
+                current = current.right
+            }
+
+            return node.key
+        }
+
+        BinarySearchTree.prototype.minValue = () => {
+            let current = this.root
+            let node = null
+            while (current !== null) {
+                node = current
+                current = current.left
+            }
+
+            return node.key
+        }
+
+        BinarySearchTree.prototype.search = key => {
+            let current = this.root
+
+            while (key !== current.key) {
+                if (key < current.key) {
+                    current = current.left
+
+                } else {
+                    current = current.right
+                }
+
+                if (current === null) return false
+            }
+
+            return true
+        }
+
+        BinarySearchTree.prototype.delete = key => {
+            let current = this.root
+            let parent = null
+
+            while (key !== current.key) {
+                parent = current
+                if (key < current.key) {
+                    current = current.left
+                } else {
+                    current = current.right
+                }
+
+                if (current === null) return false
+            }
+
+            if (current.left === null && current.right === null) {
+                if (current === this.root) {
+                    this.root = null
+                } else {
+                    current.key < parent.key ? parent.left = null : parent.right = null
+                }
+            } else if (current.left === null) {
+                if (current === this.root) {
+                    this.root = current.right
+                } else {
+                    current.key < parent.key ? parent.left = current.right : parent.right = current.right
+                }
+            } else if (current.right === null) {
+                if (current === this.root) {
+                    this.root = current.left
+                } else {
+                    current.key < parent.key ? parent.left = current.left : parent.right = current.left
+                }
+            } else {
+                let succssor = this.getSuccssor(current)
+
+                if (current === this.root) {
+                    this.root = succssor
+                } else {
+                    current.key < parent.key ? parent.left = succssor : parent.right = succssor
+                }
+
+                succssor.left = current.left
+            }
+
+            this.length -= 1
+            return true
+        }
+
+        BinarySearchTree.prototype.getSuccssor = delNode => {
+            let current = delNode.right
+            let succssor = null
+            let succssorParent = null
+
+            while (current !== null) {
+                succssorParent = succssor
+                succssor = current
+                current = current.left
+            }
+
+            if (succssorParent) {
+                succssorParent.left = succssor.right
+                succssor.right = delNode.right
+            }
+
+            return succssor
+        }
+
+    }
+
+    let bsl = new BinarySearchTree()
+
+    bsl.insert(11)
+    bsl.insert(7)
+    bsl.insert(15)
+    bsl.insert(5)
+    bsl.insert(3)
+    bsl.insert(9)
+    bsl.insert(8)
+    bsl.insert(10)
+    bsl.insert(13)
+    bsl.insert(12)
+    bsl.insert(14)
+    bsl.insert(20)
+    bsl.insert(18)
+    bsl.insert(25)
+    bsl.insert(6)
+
+    alert(bsl.length)
+    let str = ''
+        // bsl.forwordOrderTraversal((key) => {
+        //     str += key + ' '
+        // })
+        // alert(str)
+
+    // str = ''
+    // bsl.backwordOrderTraversal((key) => {
+    //     str += key + ' '
+    // })
+    // alert(str)
+
+    // str = ''
+    bsl.forwordOrderTraversal((key) => {
+        str += key + ' '
+    })
+    alert(str)
+
+    // alert(bsl.maxValue())
+    // alert(bsl.minValue())
+
+    alert(bsl.delete(13))
+    str = ''
+    bsl.forwordOrderTraversal((key) => {
+        str += key + ' '
+    })
+    alert(str)
+</script>

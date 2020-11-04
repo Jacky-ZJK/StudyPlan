@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root">
+    <div>
+      <p>{{name}}{{messaage.others.height}}</p>
+      <p>{{messaage.age}}</p>
+    </div>
+    <p>{{name}}</p>
+    <p>{{messaage}}</p>
+  </div>
+</body>
+
+<script src="./common.js"></script>
+
+<script>
+  class JGVue {
+    constructor (option) {
+      this.$selector = option.el
+      this._data = option.data
+      this.$el = this._templateDOM = document.querySelector(option.el)
+      this._parent = this._templateDOM.parentNode
+
+      this.render()
+    }
+
+    render () {
+      this.compiler()
+    }
+    
+    compiler () {
+      let realHTMLDOM = this._templateDOM.cloneNode(true)
+      compiler(realHTMLDOM, this._data)
+      this.update(realHTMLDOM)
+    }
+
+    update (realHTMLDOM) {
+      this._parent.replaceChild(realHTMLDOM, document.querySelector(this.$selector))
+    }
+  }
+</script>
+
+<script>
+  window.onload = function () {
+    let app = new JGVue({
+      el: '#root',
+      data: {
+        name: 'jacky',
+        messaage: {
+          age: '18',
+          others: {
+            height: '180'
+          }
+        }
+      }
+    })
+  }
+</script>
+</html>

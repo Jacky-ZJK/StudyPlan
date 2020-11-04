@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root">
+    <div class="title">
+      <div>{{name}}</div>
+      <div>{{age}}</div>
+      <div>{{gender}}</div>
+      <ul>
+        <li>{{others.heigh}}</li>
+        <li>{{others.weight}}</li>
+      </ul>
+    </div>
+  </div>
+</body>
+
+<script text="javascript">
+
+  class VNode {
+    constructor (tag, attrs, nodeValue, nodeType) {
+      this._tag = tag
+      this._attrs = attrs
+      this._nodeValue = nodeValue
+      this._nodeType = nodeType
+      this._children = []
+    }
+
+    appendChild (vnode) {
+      this._children.push(vnode)
+    }
+  }
+
+  function getVNode (node) {
+    let _vnode = null
+    let _nodeType = node.nodeType
+    let _nodeValue = node.nodeValue
+    
+    if (_nodeType === 3) {
+      _vnode = new VNode(undefined, undefined, _nodeValue, _nodeType)
+    } else if (_nodeType === 1) {
+      let _tag = node.nodeName.toLowerCase()
+      let _attrs = {}
+      for (let attr of node.attributes) {
+        _attrs[attr.nodeName] = attr.nodeValue
+      }
+      _vnode = new VNode(_tag, _attrs, _nodeValue, _nodeType)
+
+      let childNodes = node.childNodes
+      for (let child of childNodes) {
+        _vnode.appendChild(getVNode(child))
+      }
+    }
+
+    return _vnode
+  }
+
+  function getValueByPath (obj, path) {
+    let paths = path.split('.')
+    let prop = null
+    let res = obj
+    while (prop = paths.shift()) {
+      res = res[prop]
+    }
+
+    return res
+  }
+
+  function combine (ast, data) {
+    let r = /\{\{(.+?)\}\}/g
+    let _children = ast._children
+    let _vnode = null
+    let _nodeType = ast._nodeType
+    
+    if (_nodeType === 3) {
+      let _nodeValue = ast._nodeValue.replace(r, (_, g) => getValueByPath(data, g.trim()))
+      _vnode = new VNode(undefined, undefined, _nodeValue, _nodeType)
+    } else if (_nodeType === 1) {
+      let _tag = ast._tag
+      let _attrs = ast._attrs
+      _vnode = new VNode(_tag, _attrs, undefined, _nodeType)
+
+      let childNodes = ast._children
+      
+      for (let child of childNodes) {
+        _vnode.appendChild(combine(child, data))
+      }
+    }
+    
+    return _vnode
+  }
+
+  function parseVDOM (vnode) {
+    let el = null
+    if (vnode._nodeType === 1) {
+      el = document.createElement(vnode._tag)
+      Object.keys(vnode._attrs).forEach(key => el.setAttribute(key, vnode._attrs[key]))
+      for (let node of vnode._children) {
+        el.appendChild(parseVDOM(node))
+      }      
+    } else if (vnode._nodeType === 3) {
+      return document.createTextNode(vnode._nodeValue)
+    }
+
+    return el
+  }
+
+  class JGVue {
+    constructor (option) {
+      this.$el = null
+      this._template = document.querySelector(option.el)
+      this._data = option.data
+
+      this.mount() //挂载
+    }
+    /*  */
+    mount () {
+      //需要提供一个render方法： 生成虚拟DOM
+      this.render = this.createRenderFn()
+
+      this.mountComponent()
+    }
+    mountComponent () {
+      let mount = () => {
+        this.update(this.render())
+      }
+      mount.call(this)
+    }
+    createRenderFn () {
+      let ast = getVNode(this._template)
+      
+      return function render () {
+        let _tmp = combine(ast, this._data)
+        return _tmp
+      }
+    }
+    update (vnode) {
+      this.$el = parseVDOM(vnode)
+      root.parentNode.replaceChild(this.$el, this._template)
+    }
+  }
+  
+  new JGVue({
+    el: '#root',
+    data: {
+      name: 'jacky',
+      age: 18,
+      gender: 'meal',
+      others: {
+        heigh: '180cm',
+        weight: '75kg'
+      }
+    }
+  })
+</script>
+</html>

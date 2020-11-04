@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>优先级队列</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        function PriorityQueue() {
+            function QueueElement(element, priority) {
+                this.element = element
+                this.priority = priority
+            }
+
+            this.items = []
+
+            //将元素添加到队列尾部
+            PriorityQueue.prototype.enqueue = function(ele, pri) {
+                let queue = new QueueElement(ele, pri)
+                let flag = true
+                if (this.items.length === 0) {
+                    this.items.push(queue)
+                } else {
+                    for (var i = 0; i < this.items.length; i++) {
+                        if (queue.priority < this.items[i].priority) {
+                            this.items.splice(i, 0, queue)
+                            flag = false
+                            return
+                        }
+                    }
+
+                    if (flag) {
+                        this.items.push(queue)
+                    }
+                }
+            }
+
+            //将元素从队列取出
+            PriorityQueue.prototype.dequeue = function() {
+                return this.items.shift()
+            }
+
+            //3、查看队列第一个元素
+            PriorityQueue.prototype.front = function() {
+                return this.items[0]
+            }
+
+            //4、判断队列是否为空
+            PriorityQueue.prototype.isEmpty = function() {
+                return this.items.length == 0
+            }
+
+            //5、队列长度
+            PriorityQueue.prototype.size = function() {
+                return this.items.length
+            }
+
+            //6、toString方法
+            PriorityQueue.prototype.toString = function() {
+                var result = ''
+                for (var i = 0; i < this.items.length; i++) {
+                    result += `${this.items[i].element}-${this.items[i].priority} `
+                }
+                return result
+            }
+        }
+
+        let temp = new PriorityQueue()
+        temp.enqueue('qwe', 11)
+        temp.enqueue('asd', 12)
+        temp.enqueue('zxc', 13)
+        temp.enqueue('iop', 1)
+        temp.enqueue('jkl', 10)
+
+        console.log(temp.dequeue());
+
+        console.log(temp.size());
+        console.log(temp.front());
+        console.log(temp.isEmpty());
+
+
+
+        alert(temp.toString())
+    </script>
+</body>
+
+</html>

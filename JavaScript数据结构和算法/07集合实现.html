@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function MySet() {
+            this.items = {}
+            this.length = 0
+
+            MySet.prototype.put = function(value) {
+                if (this.get(value)) return false
+
+                this.items[value] = value
+                this.length += 1
+                return true
+            }
+
+            MySet.prototype.get = function(value) {
+                if (this.length === 0) return false
+                let values = Object.keys(this.items)
+
+                for (let i = 0; i < values.length; i++) {
+                    if (value === values[i]) {
+                        return true
+                    }
+                }
+                return false
+            }
+
+            MySet.prototype.remove = function(value) {
+                if (this.length === 0) return false
+                let values = Object.keys(this.items)
+                for (let i = 0; i < values.length; i++) {
+                    if (value === values[i]) {
+                        delete this.items[value]
+                        this.length -= 1
+                        return true
+                    }
+                }
+                return false
+            }
+
+            MySet.prototype.union = function(otherSet) {
+                let newSet = new MySet()
+                let values = Object.keys(this.items)
+                for (let i = 0; i < this.length; i++) {
+                    newSet.put(values[i])
+                }
+
+                values = Object.keys(otherSet.items)
+                for (let i = 0; i < otherSet.length; i++) {
+                    newSet.put(values[i])
+                }
+
+                return newSet
+            }
+
+            MySet.prototype.intersection = function(otherSet) {
+                let newSet = new MySet()
+                let values = Object.keys(this.items)
+                for (let i = 0; i < this.length; i++) {
+                    if (otherSet.get(values[i])) {
+                        newSet.put(values[i])
+                    }
+                }
+                return newSet
+            }
+
+            MySet.prototype.subSet = function(otherSet) {
+                let newSet = new MySet()
+                let values = Object.keys(this.items)
+                for (let i = 0; i < this.length; i++) {
+                    if (!otherSet.get(values[i])) {
+                        newSet.put(values[i])
+                    }
+                }
+                return newSet
+            }
+
+            MySet.prototype.childSet = function(otherSet) {
+                let values = Object.keys(this.items)
+                for (let i = 0; i < this.length; i++) {
+                    if (!otherSet.get(values[i])) return false
+                }
+                return true
+            }
+        }
+
+        let myset = new MySet()
+        let otherSet = new MySet()
+        myset.put('abc')
+            // myset.put('bbb')
+        myset.put('ccc')
+        otherSet.put('qqq')
+        otherSet.put('abc')
+        otherSet.put('ddd')
+        otherSet.put('ccc')
+
+        console.log(myset.union(otherSet));
+        console.log(myset.intersection(otherSet));
+        console.log(myset.subSet(otherSet));
+        console.log(myset.childSet(otherSet));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>队列实现</title>
+	<script type="text/javascript">
+		
+	</script>
+</head>
+<body>
+	<script>
+		function Queue() {
+			//属性：
+			this.items = []
+
+			//方法：
+			//1、将元素添加到队列尾部
+			Queue.prototype.enqueue = function(element) {
+				this.items.push(element)
+			}
+			//2、将元素从队列取出
+			Queue.prototype.dequeue = function() {
+				return this.items.shift()
+			}
+			//3、查看队列第一个元素
+			Queue.prototype.front = function() {
+				return this.items[0]
+			}
+			//4、判断队列是否为空
+			Queue.prototype.isEmpty = function() {
+				return this.items.length == 0
+			}
+			//5、队列长度
+			Queue.prototype.size = function() {
+				return this.items.length
+			}
+			//6、toString方法
+			Queue.prototype.toString = function() {
+				var result = ''
+				for(var i = 0;i < this.items.length;i++) {
+					result += this.items[i] + ' '
+				}
+				return result
+			}
+		}
+		var queue = new Queue()
+		queue.enqueue('asd')
+		queue.enqueue('qwe')
+		queue.enqueue('zxc')
+		queue.enqueue('rty')
+		queue.enqueue('fgh')
+		console.log(queue.items)
+		queue.dequeue()
+		queue.dequeue()
+		console.log(queue.items)
+		console.log(queue.front())
+		console.log(queue.isEmpty())
+		console.log(queue.size())
+		console.log(queue.toString())
+		
+		//击鼓传花
+		function passGame(nameList,forNum) {
+			var queue = new Queue()
+			for(var i = 0; i < nameList.length; i++) {
+				queue.enqueue(nameList[i])
+			}
+			while(queue.size() > 1) {
+				for(var i = 0; i < forNum - 1; i++) {
+					queue.enqueue(queue.dequeue())
+				}
+				queue.dequeue()
+			}
+			console.log(queue.size())
+			console.log(queue.items[0])
+			console.log(nameList.indexOf(queue.items[0]))
+
+			return queue.front()
+		}
+		var names = ['Lily','Lucy','Rock','Jacky','Mark']
+		console.log(passGame(names,3))
+	</script>
+</body>
+</html>

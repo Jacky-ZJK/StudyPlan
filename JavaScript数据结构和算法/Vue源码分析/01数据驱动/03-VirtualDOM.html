@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root">
+    <div class="title">
+      <div>hello1</div>
+      <div>hello2</div>
+      <div>hello3</div>
+      <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+      </ul>
+    </div>
+    <p>world1</p>
+    <p>world2</p>
+    <p>world3</p>
+  </div>
+</body>
+
+<script>
+  class VNode {
+    constructor (tag, attrs, nodeValue, nodeType) {
+      this.tag = tag
+      this.attrs = attrs
+      this.nodeValue = nodeValue
+      this.nodeType = nodeType
+      this.children = []
+    }
+    appendChild (node) {
+      this.children.push(node)
+    }
+  }
+
+  function getVNode (node) {
+    let _vnode = null
+    let _nodeType = node.nodeType
+    let _nodeValue = node.nodeValue
+    
+    if (_nodeType === 1) {
+      let _tag = node.nodeName.toLowerCase()
+      let _attrs = {}
+      for (let attr of node.attributes) {
+        _attrs[attr.nodeName] = attr.nodeValue
+      }
+      _vnode = new VNode(_tag, _attrs, _nodeValue, _nodeType)
+
+      let childNodes = node.childNodes
+      for (let child of childNodes) {
+        _vnode.appendChild(getVNode(child))
+      }
+    } else if (_nodeType === 3) {
+      _vnode = new VNode(undefined, undefined, _nodeValue, _nodeType)
+    }
+
+    return _vnode
+  }
+
+  let templateDOM = document.querySelector('#root')
+  
+  let virtualDOM = getVNode (templateDOM)
+  
+  function parseVDOM (vnode) {
+    let el = null
+    if (vnode.nodeType === 1) {
+      el = document.createElement(vnode.tag)
+      Object.keys(vnode.attrs).forEach(key => el.setAttribute(key, vnode.attrs[key]))
+      for (let node of vnode.children) {
+        el.appendChild(parseVDOM(node))
+      }      
+    } else if (vnode.nodeType === 3) {
+      return document.createTextNode(vnode.nodeValue)
+    }
+
+    return el
+  }
+  console.log(parseVDOM(virtualDOM));
+  
+</script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root">
+    <div>
+      <p>{{name}}</p>
+      <p>{{messaage}}</p>
+    </div>
+    <p>{{name}}</p>
+    <p>{{messaage}}</p>
+  </div>
+</body>
+
+<script>
+    //1、获取模板
+    let tmpNode = document.querySelector( '#root' )
+    
+    //2、获取数据
+    let data = {
+      name: 'jacky',
+      messaage: 'hello world!'
+    }
+
+    //3、将数据放到模板中，生成真正的DOM
+    let generateNode = tmpNode.cloneNode(true)
+
+    ;(function compiler(template, data) {
+      let r = /\{\{(.+?)\}\}/g
+      let childNodes = template.childNodes
+      for (let node of childNodes) {
+        if (node.nodeType === 3) {
+          node.nodeValue = node.nodeValue.replace(r, (_, g) => data[g.trim()])
+        } else if (node.nodeType === 1) {
+          compiler(node, data)
+        }
+      }
+    })(generateNode, data)
+
+    console.log(tmpNode);
+    console.log(generateNode);
+    
+
+    root.parentNode.replaceChild(generateNode, root)
+</script>
+</html>

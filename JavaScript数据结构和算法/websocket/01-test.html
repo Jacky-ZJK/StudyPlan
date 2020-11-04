@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  </head>
+
+  <body>
+
+  </body>
+
+  <script>
+    let ws = new WebSocket('ws://localhost:8080')
+    ws.addEventListener('open', function () {
+      console.log('open');
+      ws.send('hello')
+    })
+    ws.addEventListener('message', function (evt) {
+      console.log('evt.data');
+      ws.close()
+    })
+    ws.addEventListener('close', function () {
+      console.log('close');
+      
+    })
+  </script>
+</html>
